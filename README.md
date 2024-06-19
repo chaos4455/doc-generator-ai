@@ -28,6 +28,54 @@ Este projeto demonstra um exemplo prático de automação de CI/CD para geraçã
 - **API de Linguagem** 🌐: Utilizada para gerar o conteúdo dos manuais.
 - **Markdown** 📄: Formato utilizado para salvar os manuais gerados.
 
+## Entenda: 
+
+### Diagrama de Árvore: Processo de Geração Automatizada de Manuais 🌳📘🤖
+
+- **Verificação Inicial**
+  - 📂 **Checkout do Repositório**
+    - Utiliza o `actions/checkout@v2` para obter o código do repositório.
+
+- **Configuração do Ambiente**
+  - 🐍 **Setup Python 3.11**
+    - Usa `actions/setup-python@v2` para configurar o ambiente Python 3.11.
+  
+  - 📦 **Instalação de Dependências**
+    - Instala a biblioteca `requests` para comunicação com a API Gemini.
+
+- **Preparação do Script `doc-gen.py`**
+  - 🛠️ **Verificação e Preparação**
+    - Verifica a existência do script `doc-gen.py` e o torna executável, se necessário.
+
+- **Geração de Manuais**
+  - 📝 **Configuração de Tema**
+    - Define o tema dos manuais através da variável de ambiente `TEMA`.
+
+  - 🤖 **Execução do Script `doc-gen.py`**
+    - Utiliza o script para gerar conteúdo textual baseado no tema especificado.
+
+- **Processamento Paralelo**
+  - ⚙️ **ThreadPoolExecutor**
+    - Processa múltiplos manuais em paralelo para otimização de desempenho.
+
+- **Verificação de Artefatos**
+  - 📂 **Verificação de Manuais Gerados**
+    - Examina o diretório de artefatos para confirmar a geração bem-sucedida dos manuais.
+
+- **Commit e Push Automatizados**
+  - 🔄 **Configuração do Git**
+    - Define configurações globais de usuário para commits automatizados.
+
+  - 📦 **Commit de Alterações**
+    - Adiciona e commita os manuais gerados de volta ao repositório.
+
+  - 🚀 **Push para o Repositório**
+    - Utiliza o token de acesso GitHub para push automático das alterações para a branch `main`.
+
+---
+
+Este diagrama ilustra as etapas detalhadas do processo de automação para a geração de manuais técnicos, mostrando como cada passo contribui para a eficiência e consistência na produção de documentação. 🌟🔧
+
 ## 🤖 Automatização de Geração e Commit de Manuais
 
 Este repositório contém um fluxo de trabalho automatizado para gerar e commitar manuais automaticamente no GitHub. Utiliza GitHub Actions para executar o script `doc-gen.py`, que gera manuais baseados em temas específicos fornecidos como variáveis de ambiente.
