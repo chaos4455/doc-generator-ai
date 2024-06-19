@@ -1,9 +1,7 @@
 name: Move and Update Manuals
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   move-and-update-manuals:
