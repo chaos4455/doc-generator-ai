@@ -26,6 +26,63 @@ O **Doc Generator AI** é uma aplicação avançada que automatiza a geração d
 - **API de Linguagem** 🌐: Utilizada para gerar o conteúdo dos manuais.
 - **Markdown** 📄: Formato utilizado para salvar os manuais gerados.
 
+## 🤖 Automatização de Geração e Commit de Manuais
+
+Este repositório contém um fluxo de trabalho automatizado para gerar e commitar manuais automaticamente no GitHub. Utiliza GitHub Actions para executar o script `doc-gen.py`, que gera manuais baseados em temas específicos fornecidos como variáveis de ambiente.
+
+### Funcionalidades Principais
+
+- **Automação de Geração de Manuais**: Utiliza Python 3.11 para executar o script `doc-gen.py`, que interage com a API de geração de conteúdo do Google Gemini.
+  
+- **CI/CD Automatizado**: Configurado para rodar no evento de push para a branch `main`, garantindo a geração automática de manuais sempre que há atualizações no código.
+
+- **Verificação e Commit**: Após a geração dos manuais, verifica se os artefatos foram gerados corretamente e realiza um commit com as alterações no repositório.
+
+- **Configuração do Git**: Configura o Git dentro do ambiente de execução para permitir commits automatizados.
+
+### Passos Detalhados
+
+1. **Checkout do Repositório**:
+   - Utiliza `actions/checkout` para clonar o repositório no ambiente de execução do GitHub Actions.
+
+2. **Configuração do Ambiente Python**:
+   - Usa `actions/setup-python` para configurar a versão 3.11 do Python, necessária para executar o script `doc-gen.py`.
+
+3. **Instalação da Biblioteca Requests**:
+   - Garante que a biblioteca `requests` esteja instalada para fazer requisições HTTP necessárias no script.
+
+4. **Verificação e Permissão do Script**:
+   - Verifica se o script `doc-gen.py` existe e o torna executável usando `chmod +x`.
+
+5. **Execução do Script de Geração de Manuais**:
+   - Define variáveis de ambiente, como `GOOGLEAPIKEY` e `TEMA`, necessárias para a execução do script, e executa-o passando o tema como argumento.
+
+6. **Verificação dos Artefatos Gerados**:
+   - Após a execução do script, lista os artefatos gerados para verificar se foram criados corretamente.
+
+7. **Configuração do Git para Commit Automático**:
+   - Configura o nome e e-mail do usuário Git para permitir commits automáticos usando o GitHub Actions.
+
+8. **Commit Automático das Alterações**:
+   - Adiciona as alterações feitas (os manuais gerados) ao índice do Git e realiza um commit com uma mensagem padronizada contendo o tema dos manuais gerados.
+
+9. **Push das Mudanças de Volta para o Repositório**:
+   - Empurra as alterações com os novos manuais gerados de volta para a branch `main` do repositório remoto.
+
+### Configuração Adicional
+
+Certifique-se de configurar a variável de ambiente `GOOGLEAPIKEY` como um segredo no GitHub para garantir a segurança da chave de API utilizada na integração com o Google Gemini.
+
+### Referência ao Fluxo de Trabalho Completo
+
+Para ver o fluxo de trabalho completo configurado em YAML, consulte [`.github/workflows/generate-docs.yaml`](https://github.com/chaos4455/doc-generator-ai/blob/main/.github/workflows/generate-docs.yaml).
+
+---
+
+Este projeto demonstra um exemplo prático de automação de CI/CD para geração de documentação usando GitHub Actions, destacando minha habilidade em desenvolvimento de automação, integração contínua e entrega contínua (CI/CD), e uso de ferramentas de automação para melhorar eficiência e consistência no ciclo de desenvolvimento de software.
+
+
+
 ## 🔧 Configuração e Uso
 
 ### 1. Clonar o Repositório
