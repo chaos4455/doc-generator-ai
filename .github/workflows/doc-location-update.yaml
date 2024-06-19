@@ -7,6 +7,11 @@ jobs:
   move-and-update-manuals:
     runs-on: ubuntu-latest
     steps:
+      - name: Clean up environment
+        run: |
+          rm -rf manuals
+          git checkout -- .
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
