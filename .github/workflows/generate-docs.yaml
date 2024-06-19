@@ -22,17 +22,21 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install requests
 
-      - name: Create artifacts directory
+      - name: Clone repository
         run: |
-          mkdir -p artifacts
+          git clone https://github.com/chaos4455/doc-generator-ai.git /github/workspace
 
-      - name: Ensure doc-gen.py exists and is executable
+      - name: Verify doc-gen.py and make executable
         run: |
           if [ ! -f "/github/workspace/doc-gen.py" ]; then
             echo "Error: doc-gen.py not found."
             exit 1
           fi
           chmod +x /github/workspace/doc-gen.py
+
+      - name: Create artifacts directory
+        run: |
+          mkdir -p artifacts
 
       - name: Run doc-gen.py to generate manuals
         env:
@@ -54,7 +58,7 @@ jobs:
         run: |
           git add .
           git commit -m "Generated manuals for $TEMA"
-      
+
       - name: Push changes back to repository
         run: |
           git push origin main
