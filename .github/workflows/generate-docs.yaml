@@ -43,8 +43,9 @@ jobs:
           git config --local user.name "GitHub Actions"
           git add .
           git commit -m "Adiciona documentação gerada em $current_datetime"
-      
+
       - name: Push das mudanças de volta para o repositório
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git push origin main
+        env:
+          CI: true
