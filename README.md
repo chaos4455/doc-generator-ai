@@ -8,7 +8,7 @@
 
 ## 🌟 Visão Geral
 
-O **Doc Generator AI** é uma aplicação avançada que automatiza a geração de manuais técnicos detalhados utilizando inteligência artificial. Este projeto faz parte do meu portfólio pessoal de DevOps e exemplifica a implementação completa do ciclo CI/CD e automação de DevOps, integrado com soluções de IA.
+O **Doc Generator AI** é uma aplicação avançada que automatiza a geração de manuais técnicos detalhados utilizando inteligência artificial. Todos os manuais presentes nesse repositório foram gerados on cloud usando arquitetura de cloud nativa, prática de CD e remote reployment e remote execution para geração dos artefatos usando conceitos de CD via Github Actions. Todo código nesse repositório foi gerado de forma 100 % automática usando a Ia do google Gemini em ambiente cloud do proprio github actions. Este projeto faz parte do meu portfólio pessoal de DevOps e exemplifica a implementação completa do ciclo CI/CD e automação de DevOps, integrado com soluções de IA.
 
 Este projeto demonstra um exemplo prático de automação de CI/CD para geração de documentação usando GitHub Actions, destacando minha habilidade em desenvolvimento de automação, integração contínua e entrega contínua (CI/CD), e uso de ferramentas de automação para melhorar eficiência e consistência no ciclo de desenvolvimento de software.
 
