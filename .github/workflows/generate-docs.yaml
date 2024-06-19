@@ -26,6 +26,14 @@ jobs:
         run: |
           mkdir -p artifacts
 
+      - name: Ensure doc-gen.py exists and is executable
+        run: |
+          if [ ! -f "/github/workspace/doc-gen.py" ]; then
+            echo "Error: doc-gen.py not found."
+            exit 1
+          fi
+          chmod +x /github/workspace/doc-gen.py
+
       - name: Run doc-gen.py to generate manuals
         env:
           GOOGLEAPIKEY: ${{ secrets.GOOGLEAPIKEY }}
