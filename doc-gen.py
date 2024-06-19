@@ -1,4 +1,5 @@
 import os
+import sys
 import requests
 import hashlib
 import re
@@ -44,7 +45,7 @@ def generate_content(prompt_text):
 
 # Função para gerar uma lista de subtemas baseada no tema principal
 def generate_subthemes(theme):
-    prompt_text = f"Gere 44 subtemas baseados no tema '{theme}'."
+    prompt_text = f"Gere 2 subtemas baseados no tema '{theme}'."
     subthemes_text = generate_content(prompt_text)
     if subthemes_text:
         return [subtheme.strip() for subtheme in subthemes_text.split('\n') if subtheme.strip()]
@@ -54,7 +55,7 @@ def generate_subthemes(theme):
 
 # Função para gerar a lista de títulos dos manuais para um subtema
 def generate_manual_titles(subtheme):
-    prompt_text = f"Crie uma lista com 44 títulos de manuais que podem ser criados sobre o subtema '{subtheme}'."
+    prompt_text = f"Crie uma lista com 2 títulos de manuais que podem ser criados sobre o subtema '{subtheme}'."
     titles_text = generate_content(prompt_text)
     if titles_text:
         return [title.strip() for title in titles_text.split('\n') if title.strip()]
@@ -84,7 +85,7 @@ def process_manuals(subtheme, manual_titles):
 def generate_manual_content(subtheme, title):
     prompt = (
         f"{title}. Tema: {subtheme}. "
-        "O manual deve ensinar no mínimo 44 coisas e deve ser estilizado para o Notion, ser bem detalhado, estilizado, completo, ensinar tudo nos mínimos detalhes, não ser superficial, ser extremamente detalhado, usar muitos ícones e emojis nas respostas."
+        "O manual deve ensinar no mínimo 22 coisas e deve ser estilizado para o Notion, ser bem detalhado, estilizado, completo, ensinar tudo nos mínimos detalhes, não ser superficial, ser extremamente detalhado, usar muitos ícones e emojis nas respostas."
     )
     return generate_content(prompt)
 
@@ -105,8 +106,8 @@ def create_manuals(theme):
     else:
         print("Falha ao gerar a lista de subtemas.")
 
-# Pergunta ao usuário o tema para os manuais
-tema = input("Digite o tema para os manuais: ")
+# Obtém o tema da variável de ambiente TEMA, se não definido, usa um tema padrão
+tema = os.getenv("TEMA", "Tema Padrão")
 
 # Cria os manuais com base no tema fornecido
 create_manuals(tema)
