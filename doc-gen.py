@@ -85,7 +85,7 @@ def process_manuals(subtheme, manual_titles):
 def generate_manual_content(subtheme, title):
     prompt = (
         f"{title}. Tema: {subtheme}. "
-        "O manual deve ser pratico, operacional, ensinar o que fazer, como fazer, de que jeito fazer, em detalhes, exemplo, do começo ao fim, auto explicativo, nao pode ser apenas índice ou listas, tem que ser processos,  deve ser estilizado para o Notion, ser bem detalhado, estilizado, completo, ensinar tudo nos mínimos detalhes, não ser superficial, ser extremamente explicativo e prático, usar didatica técnica , usar muitos ícones e emojis nas respostas."
+        "crie os manuais altamente ricos, estilizado, use topicos, seções, exemplos, snippets, tabelas, diagramas de árvore, use tudo com muito icones, emojis, tudo que for representado por um nome, tecnologia, processo, objeto, algo que seja um verbo, uma ação, uma ferramenta, uma prática, use sempre icones, emijis, pra estilizar o manual, O manual deve ser pratico, operacional, ensinar o que fazer, como fazer, de que jeito fazer, em detalhes, exemplo, do começo ao fim, auto explicativo, nao pode ser apenas índice ou listas, tem que ser processos,  deve ser estilizado para o Notion, ser bem detalhado, estilizado, completo, ensinar tudo nos mínimos detalhes, não ser superficial, ser extremamente explicativo e prático, usar didatica técnica , usar muitos ícones e emojis nas respostas."
     )
     return generate_content(prompt)
 
