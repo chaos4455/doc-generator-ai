@@ -12,6 +12,13 @@ O **Doc Generator AI** é uma aplicação avançada que automatiza a geração d
 
 Este projeto demonstra um exemplo prático de automação de CI/CD para geração de documentação usando GitHub Actions, destacando minha habilidade em desenvolvimento de automação, integração contínua e entrega contínua (CI/CD), e uso de ferramentas de automação para melhorar eficiência e consistência no ciclo de desenvolvimento de software.
 
+<!-- 🤖📚 Repositório de Automação de Documentação de IA e Python -->
+
+Este repositório exemplifica a automação de documentação para projetos de IA e Python, integrando práticas avançadas de CI/CD e DevOps. Utiliza GitHub Actions para gerar documentação automaticamente a partir do código fonte.
+
+![AIops + Devops](https://raw.githubusercontent.com/chaos4455/doc-generator-ai/main/_f80113f3-64a9-469e-9204-2f370d1dead9.jpeg)
+
+
 ## 📌 Funcionalidades
 
 - 📝 **Geração de Conteúdo**: Utiliza APIs avançadas de linguagem para gerar conteúdo técnico detalhado e estilizado.
@@ -27,6 +34,13 @@ Este projeto demonstra um exemplo prático de automação de CI/CD para geraçã
 - **GitHub Actions** 🛠️: Ferramenta de CI/CD para automação do ciclo de vida do software.
 - **API de Linguagem** 🌐: Utilizada para gerar o conteúdo dos manuais.
 - **Markdown** 📄: Formato utilizado para salvar os manuais gerados.
+
+<!-- 🛠️🔄 Integração Contínua e Entrega Contínua (CI/CD) -->
+
+O fluxo de trabalho está configurado com GitHub Actions para realizar CI/CD, garantindo que a documentação seja atualizada automaticamente a cada alteração no código. A imagem abaixo mostra a Action executando a geração de documentação diretamente neste repositório:
+
+![GitHub Action - Geração de Documentação](https://raw.githubusercontent.com/chaos4455/doc-generator-ai/main/chrome_RsADlRQT5j.png)
+
 
 ## Entenda: 
 
@@ -53,6 +67,13 @@ Este projeto demonstra um exemplo prático de automação de CI/CD para geraçã
 
   - 🤖 **Execução do Script `doc-gen.py`**
     - Utiliza o script para gerar conteúdo textual baseado no tema especificado.
+
+<!-- 📘🖥️ Manuais Gerados -->
+
+Os manuais são gerados e disponibilizados automaticamente no ambiente de execução do projeto. Abaixo está um exemplo dos manuais gerados que são essenciais para entender e utilizar as funcionalidades do projeto:
+
+![Manuais Gerados](https://raw.githubusercontent.com/chaos4455/doc-generator-ai/main/chrome_Wh9AfzmWfC.png)
+
 
 - **Processamento Paralelo**
   - ⚙️ **ThreadPoolExecutor**
