@@ -8,44 +8,32 @@ on:
 jobs:
   generate-docs:
     runs-on: ubuntu-latest
+    container:
+      image: python:3.11  # imagem Docker com Python 3.11
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v2
 
-      - name: Configurar Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.11'  # ajuste conforme a versão do Python que você precisa
-
-      - name: Instalar dependências
+      - name: Set up Python
         run: |
           python -m pip install --upgrade pip
-          pip install requests  # Instalação do pacote requests
+          pip install requests
 
-      - name: Executar script de geração de documentação
+      - name: Run doc-gen.py script
         env:
           GOOGLEAPIKEY: ${{ secrets.GOOGLEAPIKEY }}
+          TEMA: "Tema para os manuais"  # Defina o tema aqui
         run: |
-          python doc-gen.py
+          python /github/workspace/doc-gen.py "$TEMA"
 
-      - name: Criar pasta com data e hora
+      - name: List generated files
         run: |
-          current_datetime=$(date '+%Y-%m-%d_%H-%M-%S')
-          mkdir documentacao-$current_datetime
+          ls -l
 
-      - name: Mover artefatos gerados para a pasta específica
-        run: |
-          mv *.md documentacao-$current_datetime/
-
-      - name: Adicionar e commit dos artefatos gerados
+      - name: Add and commit generated files
         run: |
           git config --local user.email "github-actions@github.com"
           git config --local user.name "GitHub Actions"
           git add .
-          git commit -m "Adiciona documentação gerada em $current_datetime"
-
-      - name: Push das mudanças de volta para o repositório
-        run: |
+          git commit -m "Add generated documentation"
           git push origin main
-        env:
-          CI: true
