@@ -1,0 +1,46 @@
+name: Move and Update Manuals
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  move-and-update-manuals:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: List files for processing
+        run: |
+          find . -type f -name "*.md" | grep -E '[^_]*_[^_]*_[^_]*_[^_]*\.md' | xargs -I {} echo "Moving {} to manuals/"
+
+      - name: Create manuals directory if not exists
+        run: |
+          mkdir -p manuals
+
+      - name: Move files to manuals directory
+        run: |
+          find . -type f -name "*.md" | grep -E '[^_]*_[^_]*_[^_]*_[^_]*\.md' | xargs -I {} mv {} manuals/
+
+      - name: Update file paths in repository
+        run: |
+          find . -type f -name "*.md" -exec sed -i 's|\([^\[]*\)\.md|\1/manuals/&|g' {} +
+
+      - name: Verify changes
+        run: |
+          git status
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+      - name: Commit and push changes
+        run: |
+          git add .
+          git commit -m "Move manuals to 'manuals' directory"
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
