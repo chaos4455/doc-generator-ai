@@ -203,8 +203,9 @@ python doc-gen.py "$TEMA"
 Os manuais gerados serão armazenados no diretório artifacts.
 
 🛠️ Estrutura do Projeto
-bash
-Copiar código
+
+```bash
+
 .
 ├── doc-gen.py          # Script principal de geração de conteúdo
 ├── README.md           # Documentação do projeto
@@ -212,6 +213,7 @@ Copiar código
 │   └── workflows
 │       └── generate-manuals.yml  # Workflow do GitHub Actions
 └── artifacts           # Diretório para armazenar os manuais gerados
+```
 
 🌍 Ciclo DevOps
 
