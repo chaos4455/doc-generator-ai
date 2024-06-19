@@ -81,6 +81,50 @@ Para ver o fluxo de trabalho completo configurado em YAML, consulte [`.github/wo
 
 Este projeto demonstra um exemplo prático de automação de CI/CD para geração de documentação usando GitHub Actions, destacando minha habilidade em desenvolvimento de automação, integração contínua e entrega contínua (CI/CD), e uso de ferramentas de automação para melhorar eficiência e consistência no ciclo de desenvolvimento de software.
 
+### Geração Automatizada de Manuais 📘🤖
+
+Este projeto utiliza um script Python chamado `doc-gen.py` para automatizar a geração de manuais de forma inteligente e eficiente. A seguir, detalhamos como esse script é integrado em um fluxo de trabalho automatizado de CI/CD e DevOps.
+
+#### **Script Python: `doc-gen.py`**
+
+O arquivo `doc-gen.py` é o núcleo deste projeto, responsável por integrar a lógica de geração de conteúdo utilizando a API Google Gemini para criar manuais detalhados com base em temas específicos.
+
+**Funcionalidades Principais:**
+
+- **Geração de Nome Único:** Utiliza hash SHA-256 para gerar nomes únicos para os manuais, garantindo identificação única.
+  
+- **Requisição à API Gemini:** Envia requisições à API Google Gemini para gerar conteúdo textual baseado em prompts específicos.
+
+- **Processamento em Paralelo:** Utiliza `ThreadPoolExecutor` para processar múltiplos manuais simultaneamente, otimizando o tempo de geração.
+
+#### **Uso no Fluxo de Trabalho**
+
+No fluxo de trabalho de automação CI/CD, o `doc-gen.py` é acionado por meio de GitHub Actions, configurado para executar as seguintes etapas:
+
+1. **Instalação e Configuração:**
+   - Configura o ambiente Python 3.11.
+   - Instala a biblioteca `requests` para comunicação com a API.
+
+2. **Verificação e Preparação:**
+   - Verifica a existência do script `doc-gen.py`.
+   - Torna o script executável caso necessário.
+
+3. **Geração de Manuais:**
+   - Define o tema dos manuais através de variáveis de ambiente.
+   - Utiliza o script para gerar manuais com base no tema especificado.
+
+4. **Verificação de Artefatos:**
+   - Verifica os manuais gerados no diretório de artefatos para garantir a conclusão bem-sucedida.
+
+5. **Commit e Push Automatizados:**
+   - Configura o Git para commit e push das alterações feitas pelos manuais gerados de volta para o repositório principal.
+
+#### **Referências Adicionais**
+
+- [Código Python `doc-gen.py` no repositório](https://github.com/chaos4455/doc-generator-ai/blob/main/doc-gen.py)
+- [Arquivo YAML de configuração no GitHub Actions](https://github.com/chaos4455/doc-generator-ai/blob/main/.github/workflows/generate-docs.yaml)
+
+Este projeto demonstra minha habilidade em integrar IA com práticas DevOps para automação de processos, proporcionando eficiência e qualidade na entrega de documentação técnica avançada. 🚀✨
 
 
 ## 🔧 Configuração e Uso
