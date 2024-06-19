@@ -16,7 +16,7 @@ Este projeto demonstra um exemplo prático de automação de CI/CD para geraçã
 
 - 📝 **Geração de Conteúdo**: Utiliza APIs avançadas de linguagem para gerar conteúdo técnico detalhado e estilizado.
 - ⚙️ **Automação de Tarefas**: Geração automática de manuais baseados em temas fornecidos, com subdivisão em subtemas e criação de títulos específicos.
-- 💾 **Armazenamento de Artefatos**: Os manuais gerados são salvos como arquivos `.md` para fácil acesso e leitura.
+- 💾 **Armazenamento de Artefatos**: Os manuais gerados são salvos como arquivos `/manuals/- 💾 **Armazenamento de Artefatos**: Os manuais gerados são salvos como arquivos `.md` para fácil acesso e leitura.
 - 🛠️ **Pipeline CI/CD Completo**: Implementação de workflows GitHub Actions para automação de testes, build e deploy.
 - 📈 **Integração Contínua**: Verificação automática de dependências e integridade do código.
 - 🚀 **Entrega Contínua**: Deploy automatizado de atualizações e novas versões dos manuais.
@@ -208,7 +208,7 @@ Os manuais gerados serão armazenados no diretório artifacts.
 
 .
 ├── doc-gen.py          # Script principal de geração de conteúdo
-├── README.md           # Documentação do projeto
+├── README/manuals/├── README.md           # Documentação do projeto
 ├── .github
 │   └── workflows
 │       └── generate-manuals.yml  # Workflow do GitHub Actions
