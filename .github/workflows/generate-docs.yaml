@@ -22,17 +22,13 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install requests
 
-      - name: Clone repository
-        run: |
-          git clone https://github.com/chaos4455/doc-generator-ai.git /github/workspace
-
       - name: Verify doc-gen.py and make executable
         run: |
-          if [ ! -f "/github/workspace/doc-gen.py" ]; then
+          if [ ! -f "doc-gen.py" ]; then
             echo "Error: doc-gen.py not found."
             exit 1
           fi
-          chmod +x /github/workspace/doc-gen.py
+          chmod +x doc-gen.py
 
       - name: Create artifacts directory
         run: |
@@ -43,7 +39,7 @@ jobs:
           GOOGLEAPIKEY: ${{ secrets.GOOGLEAPIKEY }}
           TEMA: "Tema para os manuais"  # Defina o tema aqui ou como uma variável de ambiente no GitHub
         run: |
-          python /github/workspace/doc-gen.py "$TEMA"
+          python doc-gen.py "$TEMA"
 
       - name: Verify generated artifacts
         run: |
