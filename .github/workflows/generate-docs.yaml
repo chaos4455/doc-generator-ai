@@ -37,7 +37,7 @@ jobs:
       - name: Run doc-gen.py to generate manuals
         env:
           GOOGLEAPIKEY: ${{ secrets.GOOGLEAPIKEY }}
-          TEMA: "Tema para os manuais"  # Defina o tema aqui ou como uma variável de ambiente no GitHub
+          TEMA: "itil v3 e service management no ambiente windows"  # Defina o tema aqui ou como uma variável de ambiente no GitHub
         run: |
           python doc-gen.py "$TEMA"
 
