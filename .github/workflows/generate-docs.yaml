@@ -32,7 +32,7 @@ jobs:
       - name: Run doc-gen.py to generate manuals
         env:
           GOOGLEAPIKEY: ${{ secrets.GOOGLEAPIKEY }}
-          TEMA: "kubernetes CD"  # Defina o tema aqui ou como uma variável de ambiente no GitHub
+          TEMA: "google cloud VCP GKE"  # Defina o tema aqui ou como uma variável de ambiente no GitHub
         run: |
           python doc-gen.py "$TEMA"
 
