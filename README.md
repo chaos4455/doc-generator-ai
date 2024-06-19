@@ -70,7 +70,7 @@ O fluxo de trabalho está configurado com GitHub Actions para realizar CI/CD, ga
 
 <!-- 📘🖥️ Manuais Gerados -->
 
-Os manuais são gerados e disponibilizados automaticamente no ambiente de execução do projeto. Abaixo está um exemplo dos manuais gerados que são essenciais para entender e utilizar as funcionalidades do projeto:
+Os manuais são gerados e disponibilizados automaticamente no ambiente de execução do projeto. Abaixo está um exemplo dos manuais gerados no ambiente de execução, antes de serem enviados para o repo do projeto:
 
 ![Manuais Gerados](https://raw.githubusercontent.com/chaos4455/doc-generator-ai/main/chrome_Wh9AfzmWfC.png)
 
