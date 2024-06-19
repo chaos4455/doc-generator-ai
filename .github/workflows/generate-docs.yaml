@@ -1,39 +1,54 @@
-name: Generate and Commit Documentation
+name: Generate and Commit Manuals
 
 on:
   push:
     branches:
-      - main  # ajuste conforme o nome da sua branch principal
+      - main
 
 jobs:
-  generate-docs:
+  generate-manuals:
     runs-on: ubuntu-latest
-    container:
-      image: python:3.11  # imagem Docker com Python 3.11
     steps:
-      - name: Checkout do repositório
+      - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests
+          pip install -r requirements.txt  # Se houver um arquivo requirements.txt
 
-      - name: Run doc-gen.py script
+      - name: Create artifacts directory
+        run: |
+          mkdir -p artifacts
+
+      - name: Run doc-gen.py to generate manuals
         env:
           GOOGLEAPIKEY: ${{ secrets.GOOGLEAPIKEY }}
-          TEMA: "Tema para os manuais"  # Defina o tema aqui
+          TEMA: "Tema para os manuais"  # Defina o tema aqui ou como uma variável de ambiente no GitHub
         run: |
           python /github/workspace/doc-gen.py "$TEMA"
 
-      - name: List generated files
+      - name: Verify generated artifacts
         run: |
-          ls -l
+          ls -R
 
-      - name: Add and commit generated files
+      - name: Configure Git
         run: |
-          git config --local user.email "github-actions@github.com"
-          git config --local user.name "GitHub Actions"
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+      - name: Commit changes
+        run: |
           git add .
-          git commit -m "Add generated documentation"
-          git push origin main
+          git commit -m "Generated manuals for $TEMA"
+      
+      - name: Push changes back to repository
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
