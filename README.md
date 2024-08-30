@@ -157,15 +157,6 @@ Este projeto tem como objetivo criar manuais de conteúdo detalhados e estilizad
 - **Modularidade**: O código é altamente modular, com funções bem definidas, facilitando a manutenção, testes e futuras expansões.
 - **Segurança**: Utilização de variáveis de ambiente para proteger informações sensíveis, como a chave da API.
 
-## 🎯 **Conclusão**
-
-Este projeto reflete habilidades avançadas em programação Python 🐍, com um foco em automação, eficiência e uso de APIs externas para gerar conteúdo dinâmico. A abordagem é ideal para cenários onde a produção de documentos de alta qualidade e personalizados é necessária de forma rápida e eficiente.
-
----
-
-### 🌐 **Conecte-se e explore mais:**
-- [GitHub de Elias](https://github.com/)
-- [LinkedIn de Elias](https://www.linkedin.com/)
 
 # 🚀 **Implementando GitOps com GitHub Actions para Geração Automática de Manuais** 📚
 
