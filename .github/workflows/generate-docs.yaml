@@ -32,7 +32,7 @@ jobs:
       - name: Run doc-gen.py to generate manuals
         env:
           GOOGLEAPIKEY: ${{ secrets.GOOGLEAPIKEY }}
-          TEMA: "iso 27001 - segurança da informação e ransomware nas empresas do brasil - risco e oportunidades de melhoria"  # Defina o tema aqui ou como uma variável de ambiente no GitHub
+          TEMA: "dot net core api restful com JWT"  # Defina o tema aqui ou como uma variável de ambiente no GitHub
         run: |
           python doc-gen.py "$TEMA"
 
