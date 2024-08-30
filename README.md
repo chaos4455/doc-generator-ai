@@ -36,25 +36,6 @@ graph TD
   L --> N[Fim]
 ```
 
-### Explicação de cada parte do diagrama
-
-1. **A[Inicio]**: Representa o início da execução do script.
-2. **B{Obtem Tema}**: A decisão de obter o tema. Verifica se um tema foi definido pela variável de ambiente `TEMA`. 
-   - Se sim, o fluxo segue para `C[Executa create_manuals]`.
-   - Se não, vai para `D[Tema padrao]`, que define um tema padrão.
-3. **C[Executa create_manuals]**: Chama a função `create_manuals` com o tema definido.
-4. **E[Gerar Subtemas]**: A função `generate_subthemes` é chamada para gerar subtemas com base no tema principal.
-   - Se os subtemas são gerados, o fluxo segue para `F[Iterar sobre Subtemas]`.
-   - Se falha, o fluxo segue para `G[Erro ao Gerar Subtemas]`.
-5. **F[Iterar sobre Subtemas]**: Itera sobre cada subtema gerado.
-6. **H[Gerar Títulos de Manuais]**: Chama a função `generate_manual_titles` para cada subtema.
-   - Se títulos são gerados, o fluxo segue para `I[Processar Manuais]`.
-   - Se falha, o fluxo segue para `J[Erro ao Gerar Titulos]`.
-7. **I[Processar Manuais]**: Chama a função `process_manuals` para processar os manuais em paralelo.
-8. **K[Gerar Conteudo do Manual]**: Chama a função `generate_manual_content` para cada manual.
-9. **L[Salvar Conteudo em Arquivo]**: Salva o conteúdo gerado em um arquivo Markdown.
-10. **M[Erro ao Processar Manuais]**: Indica uma falha durante o processamento dos manuais.
-11. **N[Fim]**: Representa o final do script.
 
 ### Comentários sobre o Código
 
@@ -70,6 +51,215 @@ graph TD
 
 Este diagrama ajuda a visualizar o fluxo do script e entender como as diferentes partes do código interagem para atingir o objetivo final de criar manuais estilizados.
 
+# 📝 **Projeto: Gerador de Manuais de Conteúdo Automatizado** 🚀
+
+Este projeto tem como objetivo criar manuais de conteúdo detalhados e estilizados com base em temas específicos, utilizando uma **API de geração de conteúdo**. O código é escrito em Python e faz uso de várias bibliotecas para manipulação de dados, requisições HTTP, processamento em paralelo e geração de hashes únicas.
+
+## 🌟 **Principais Funcionalidades**
+
+1. **Geração de Nomes Únicos** 🔑  
+   A função `generate_unique_name` cria um identificador único para cada manual gerado. Utiliza a biblioteca `hashlib` para gerar uma **hash SHA-256** baseada no texto do prompt, garantindo que cada manual tenha um nome exclusivo.
+
+    ```python
+    def generate_unique_name(prompt_text):
+        # Remove caracteres especiais e espaços
+        clean_text = re.sub(r'[^\w\s]', '', prompt_text)
+        hash_object = hashlib.sha256(clean_text.encode())
+        hash_digest = hash_object.hexdigest()
+        unique_name = f"{clean_text[:50].replace(' ', '_')}_{hash_digest[:8]}"
+        return unique_name
+    ```
+
+2. **Requisições à API de Geração de Conteúdo** 🌐  
+   A função `generate_content` envia um prompt de texto para a **API de geração de conteúdo** do Google, utilizando a biblioteca `requests`. A função trata possíveis erros de conexão e verifica o status da resposta, retornando o conteúdo gerado.
+
+    ```python
+    def generate_content(prompt_text):
+        # Define o corpo da requisição
+        content = {
+            "contents": [{"parts": [{"text": prompt_text}]}]
+        }
+        # URL da API
+        url = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={API_KEY}'
+        
+        response = requests.post(url, json=content)
+
+        # Verifica o status da resposta
+        if response.status_code == 200:
+            json_response = response.json()
+            response_text = json_response['candidates'][0]['content']['parts'][0]['text']
+            return response_text
+        else:
+            print(f"Erro ao enviar requisição: {response.status_code} - {response.text}")
+            return None
+    ```
+
+3. **Geração de Subtemas e Títulos de Manuais** 📝  
+   A lógica de geração de subtemas (`generate_subthemes`) e títulos (`generate_manual_titles`) é baseada em prompts dinâmicos. A cada chamada, a função gera novos subtemas ou títulos que são utilizados na criação de conteúdos mais específicos e detalhados.
+
+    ```python
+    def generate_subthemes(theme):
+        # Prompt dinâmico para subtemas
+        prompt_text = f"Gere 2 subtemas baseados no tema '{theme}'."
+        subthemes_text = generate_content(prompt_text)
+        if subthemes_text:
+            return [subtheme.strip() for subtheme in subthemes_text.split('\n') if subtheme.strip()]
+        else:
+            print("Falha ao gerar a lista de subtemas.")
+            return []
+    ```
+
+4. **Processamento Paralelo de Manuais** ⚙️  
+   Utilizando o `ThreadPoolExecutor` da biblioteca `concurrent.futures`, a função `process_manuals` permite o processamento de múltiplos manuais de maneira assíncrona, maximizando a eficiência e reduzindo o tempo de espera.
+
+    ```python
+    def process_manuals(subtheme, manual_titles):
+        # Processa em paralelo com até 4 threads
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            future_to_title = {executor.submit(generate_manual_content, subtheme, title): title for title in manual_titles}
+            for future in as_completed(future_to_title):
+                title = future_to_title[future]
+                try:
+                    generated_content = future.result()
+                    if generated_content:
+                        unique_name = generate_unique_name(f"{title}_{subtheme}")
+                        with open(f"{unique_name}.md", "w", encoding="utf-8") as md_file:
+                            md_file.write(generated_content)
+                        print(f"Manual gerado com sucesso para o subtema '{subtheme}': {unique_name}.md")
+                    else:
+                        print(f"Falha ao gerar o Manual para o título: {title} no subtema '{subtheme}'")
+                except Exception as exc:
+                    print(f"Erro ao processar o Manual para o título: {title} no subtema '{subtheme}': {exc}")
+    ```
+
+5. **Criação Automática de Manuais** 📚  
+   A função `create_manuals` é o ponto de entrada principal para o script, gerenciando o fluxo de criação de manuais com base em um tema específico. Ela utiliza variáveis de ambiente para personalizar o tema e chama todas as funções auxiliares para concluir o processo.
+
+    ```python
+    def create_manuals(theme):
+        # Gera subtemas e títulos de manuais
+        subthemes = generate_subthemes(theme)
+        if subthemes:
+            for subtheme in subthemes:
+                manual_titles = generate_manual_titles(subtheme)
+                if manual_titles:
+                    process_manuals(subtheme, manual_titles)
+                else:
+                    print(f"Falha ao gerar a lista de títulos dos manuais para o subtema '{subtheme}'.")
+        else:
+            print("Falha ao gerar a lista de subtemas.")
+    ```
+
+## 🔍 **Considerações Técnicas**
+
+- **Uso de API**: A comunicação com a API do Google é realizada de forma robusta, tratando erros e validando as respostas, garantindo a integridade e sucesso da operação.
+- **Eficiência**: O uso de processamento paralelo melhora significativamente o desempenho, permitindo a geração de vários conteúdos simultaneamente.
+- **Modularidade**: O código é altamente modular, com funções bem definidas, facilitando a manutenção, testes e futuras expansões.
+- **Segurança**: Utilização de variáveis de ambiente para proteger informações sensíveis, como a chave da API.
+
+## 🎯 **Conclusão**
+
+Este projeto reflete habilidades avançadas em programação Python 🐍, com um foco em automação, eficiência e uso de APIs externas para gerar conteúdo dinâmico. A abordagem é ideal para cenários onde a produção de documentos de alta qualidade e personalizados é necessária de forma rápida e eficiente.
+
+---
+
+### 🌐 **Conecte-se e explore mais:**
+- [GitHub de Elias](https://github.com/)
+- [LinkedIn de Elias](https://www.linkedin.com/)
+
+# 🚀 **Implementando GitOps com GitHub Actions para Geração Automática de Manuais** 📚
+
+Para automatizar o processo de geração e commit de manuais diretamente no repositório do GitHub, utilizamos um **GitHub Action** que adota princípios de **GitOps**. Esta abordagem permite que toda a infraestrutura e automação sejam gerenciadas como código, garantindo rastreabilidade, segurança e fácil manutenção.
+
+## 🔧 **Descrição Técnica da GitHub Action**
+
+A **Action** definida abaixo é acionada a cada **push** na branch `main`, executando um pipeline que gera os manuais com base em um script Python (`doc-gen.py`), e em seguida faz commit das alterações diretamente no repositório.
+
+### 💻 **Passos Detalhados da GitHub Action**
+
+1. **Configuração do Ambiente** 🛠️  
+   A action começa fazendo o **checkout** do repositório e configurando a versão correta do Python (3.11), além de instalar a biblioteca `requests` necessária para realizar as requisições à API.
+
+2. **Execução do Script Python** 🐍  
+   Verificamos a existência do script `doc-gen.py` e garantimos que ele seja executável. O script é então executado utilizando variáveis de ambiente (secrets) para garantir que a chave da API (`GOOGLEAPIKEY`) e o tema (`TEMA`) sejam protegidos.
+
+3. **Verificação e Configuração do Git** 🔍  
+   Após gerar os manuais, a Action verifica os artefatos criados e configura o Git para preparar o commit das mudanças.
+
+4. **Commit e Push das Alterações** 🚀  
+   A Action adiciona todas as mudanças ao repositório, faz o commit com uma mensagem descritiva e, finalmente, faz o **push** das alterações para a branch `main`.
+
+### 🛠️ **Código da GitHub Action**
+
+```yaml
+name: Generate and Commit Manuals
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate-manuals:
+    runs-on: ubuntu-latest
+    steps:
+      # 1️⃣ Checkout do Repositório
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # 2️⃣ Configuração do Ambiente Python
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.11'
+
+      # 3️⃣ Instalação das Dependências
+      - name: Install requests library
+        run: |
+          python -m pip install requests
+
+      # 4️⃣ Verificação do Script e Permissões
+      - name: Verify doc-gen.py and make executable
+        run: |
+          if [ ! -f "doc-gen.py" ]; then
+            echo "Error: doc-gen.py not found."
+            exit 1
+          fi
+          chmod +x doc-gen.py
+
+      # 5️⃣ Execução do Script para Geração dos Manuais
+      - name: Run doc-gen.py to generate manuals
+        env:
+          GOOGLEAPIKEY: ${{ secrets.GOOGLEAPIKEY }}
+          TEMA: "criação de apis restful com asp net core"  # Defina o tema aqui ou como uma variável de ambiente no GitHub
+        run: |
+          python doc-gen.py "$TEMA"
+
+      # 6️⃣ Verificação dos Artefatos Gerados
+      - name: Verify generated artifacts
+        run: |
+          ls -R
+
+      # 7️⃣ Configuração do Git
+      - name: Configure Git
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+      # 8️⃣ Commit das Alterações
+      - name: Commit changes
+        run: |
+          git add .
+          git commit -m "Generated manuals for $TEMA"
+
+      # 9️⃣ Push das Alterações de Volta ao Repositório
+      - name: Push changes back to repository
+        run: |
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+```
 ## 📌 Funcionalidades
 
 - 📝 **Geração de Conteúdo**: Utiliza APIs avançadas de linguagem para gerar conteúdo técnico detalhado e estilizado.
