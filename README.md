@@ -18,6 +18,57 @@ Este repositório exemplifica a automação de documentação para projetos de I
 
 ![AIops + Devops](https://raw.githubusercontent.com/chaos4455/doc-generator-ai/main/_f80113f3-64a9-469e-9204-2f370d1dead9.jpeg)
 
+```mermaid
+graph TD
+  A[Inicio] --> B{Obtem Tema}
+  B -->|Tema definido| C[Executa create_manuals]
+  B -->|Tema nao definido| D[Tema padrao]
+  D --> C[Executa create_manuals]
+  C --> E[Gerar Subtemas]
+  E -->|Subtemas gerados| F[Iterar sobre Subtemas]
+  E -->|Falha| G[Erro ao Gerar Subtemas]
+  F --> H[Gerar Títulos de Manuais]
+  H -->|Titulos Gerados| I[Processar Manuais]
+  H -->|Falha| J[Erro ao Gerar Titulos]
+  I --> K[Gerar Conteudo do Manual]
+  K --> L[Salvar Conteudo em Arquivo]
+  I -->|Falha| M[Erro ao Processar Manuais]
+  L --> N[Fim]
+```
+
+### Explicação de cada parte do diagrama
+
+1. **A[Inicio]**: Representa o início da execução do script.
+2. **B{Obtem Tema}**: A decisão de obter o tema. Verifica se um tema foi definido pela variável de ambiente `TEMA`. 
+   - Se sim, o fluxo segue para `C[Executa create_manuals]`.
+   - Se não, vai para `D[Tema padrao]`, que define um tema padrão.
+3. **C[Executa create_manuals]**: Chama a função `create_manuals` com o tema definido.
+4. **E[Gerar Subtemas]**: A função `generate_subthemes` é chamada para gerar subtemas com base no tema principal.
+   - Se os subtemas são gerados, o fluxo segue para `F[Iterar sobre Subtemas]`.
+   - Se falha, o fluxo segue para `G[Erro ao Gerar Subtemas]`.
+5. **F[Iterar sobre Subtemas]**: Itera sobre cada subtema gerado.
+6. **H[Gerar Títulos de Manuais]**: Chama a função `generate_manual_titles` para cada subtema.
+   - Se títulos são gerados, o fluxo segue para `I[Processar Manuais]`.
+   - Se falha, o fluxo segue para `J[Erro ao Gerar Titulos]`.
+7. **I[Processar Manuais]**: Chama a função `process_manuals` para processar os manuais em paralelo.
+8. **K[Gerar Conteudo do Manual]**: Chama a função `generate_manual_content` para cada manual.
+9. **L[Salvar Conteudo em Arquivo]**: Salva o conteúdo gerado em um arquivo Markdown.
+10. **M[Erro ao Processar Manuais]**: Indica uma falha durante o processamento dos manuais.
+11. **N[Fim]**: Representa o final do script.
+
+### Comentários sobre o Código
+
+- **Objetivo Geral**: O script foi projetado para automatizar a criação de manuais a partir de um tema central, utilizando uma API de geração de conteúdo. A lógica permite gerar subtemas, títulos de manuais e, finalmente, o conteúdo de cada manual.
+- **Uso de Funções Específicas**:
+  - `generate_unique_name()`: Cria um nome único para o manual baseado em uma hash SHA-256 do texto.
+  - `generate_content()`: Faz uma requisição à API para gerar o conteúdo.
+  - `generate_subthemes()`: Gera subtemas a partir de um tema principal.
+  - `generate_manual_titles()`: Gera títulos de manuais para cada subtema.
+  - `process_manuals()`: Processa os manuais em paralelo para melhorar o desempenho usando `ThreadPoolExecutor`.
+  - `generate_manual_content()`: Gera o conteúdo de cada manual, seguindo um formato detalhado e estilizado.
+  - `create_manuals()`: Função principal que coordena todas as etapas de geração de manuais.
+
+Este diagrama ajuda a visualizar o fluxo do script e entender como as diferentes partes do código interagem para atingir o objetivo final de criar manuais estilizados.
 
 ## 📌 Funcionalidades
 
