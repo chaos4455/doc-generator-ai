@@ -32,7 +32,7 @@ jobs:
       - name: Run doc-gen.py to generate manuals
         env:
           GOOGLEAPIKEY: ${{ secrets.GOOGLEAPIKEY }}
-          TEMA: "criação de apis restful com asp net core"  # Defina o tema aqui ou como uma variável de ambiente no GitHub
+          TEMA: "IP Tables do básico ao avançado"  # Defina o tema aqui ou como uma variável de ambiente no GitHub
         run: |
           python doc-gen.py "$TEMA"
 
