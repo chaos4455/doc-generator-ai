@@ -32,7 +32,7 @@ jobs:
       - name: Run doc-gen.py to generate manuals
         env:
           GOOGLEAPIKEY: ${{ secrets.GOOGLEAPIKEY }}
-          TEMA: "IP Tables do básico ao avançado"  # Defina o tema aqui ou como uma variável de ambiente no GitHub
+          TEMA: "gerenciamento de patch de seguranças com red hat e solaris usando bash e shell - crie os manuais completos e longos detalhados em exemplos práticos, use icones e emojis"  # Defina o tema aqui ou como uma variável de ambiente no GitHub
         run: |
           python doc-gen.py "$TEMA"
 
