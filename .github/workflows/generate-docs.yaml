@@ -18,6 +18,21 @@ jobs:
       - name: Checkout repository
         # Recomenda-se usar a versão mais recente para melhor segurança e desempenho
         uses: actions/checkout@v4
+        # Adicione 'with: fetch-depth: 0' para garantir que todo o histórico seja buscado.
+        # Isso é importante para que 'git reset --hard' funcione corretamente contra o histórico completo.
+        with:
+          fetch-depth: 0
+
+      - name: Ensure local repository is up-to-date with main
+        # Este passo garante que a cópia local do repositório está na versão mais recente
+        # da branch 'main' *no momento em que este passo é executado*.
+        # Isso resolve a questão de "sempre fazer commit do repo atualizado antes mesmo de gerar".
+        # Ele busca as últimas mudanças da origem e reseta o HEAD local para elas.
+        run: |
+          echo "Updating local repository to the latest 'main' branch..."
+          git fetch origin main
+          git reset --hard origin/main
+          echo "Local repository is now up-to-date."
 
       - name: Set up Python 3.11
         # Recomenda-se usar a versão mais recente para melhor segurança e desempenho
@@ -35,18 +50,23 @@ jobs:
             echo "Error: doc-gen.py not found."
             exit 1
           fi
+          # Embora 'python doc-gen.py' não precise de permissão de execução,
+          # mantê-la é inofensivo e pode ser útil se você planeja executar o script diretamente.
           chmod +x doc-gen.py
 
       - name: Run doc-gen.py to generate manuals
         env:
           GOOGLEAPIKEY: ${{ secrets.GOOGLEAPIKEY }}
-          TEMA: "gerenciamento de patch de seguranças com red hat e solaris usando bash e shell - crie os manuais completos e longos detalhados em exemplos práticos, use icones e emojis"  # Defina o tema aqui ou como uma variável de ambiente no GitHub
+          TEMA: "gerenciamento de patch de seguranças com red hat e solaris usando bash e shell - crie os manuais completos e longos detalhados em exemplos práticos, use icones e emojis"
         run: |
           # Use o Python interpretador explicitamente para garantir que a versão configurada seja usada
+          echo "Running doc-gen.py with theme: $TEMA"
           python doc-gen.py "$TEMA"
+          echo "Manuals generation complete."
 
       - name: Verify generated artifacts
         run: |
+          echo "Listing generated files:"
           ls -R
 
       - name: Configure Git
@@ -60,15 +80,23 @@ jobs:
           # O 'git diff --quiet ||' garante que o 'git commit' só seja executado se houver mudanças.
           # Isso é crucial para ações agendadas, pois evita que falhem se não houver novos manuais
           # ou alterações a serem commitadas em uma determinada execução.
-          git diff --quiet || git commit -m "Generated manuals for $TEMA"
+          if git diff --quiet --cached; then
+            echo "No changes to commit."
+          else
+            echo "Committing generated manuals..."
+            git commit -m "Generated manuals for tema: '$TEMA'"
+          fi
 
       - name: Push changes back to repository
-        # Garante que o push só ocorra se o commit anterior foi bem-sucedido (ou seja, houve mudanças).
-        # Se o `git commit` anterior não fez nada (pois não havia mudanças), este push seria ineficaz
-        # mas não necessariamente falharia, mas é bom ter a condição.
-        # No entanto, o `git diff --quiet || git commit` já lida com a maioria dos casos.
-        # A linha `git push` por si só já é segura o suficiente aqui, pois se não houve commit, não há o que empurrar.
+        # Este passo só será executado e terá efeito se houver um commit feito no passo anterior.
         run: |
-          git push origin main
+          # Verifica se há commits para empurrar.
+          # Isso é redundante com a lógica do commit, mas adiciona uma camada de segurança.
+          if [ "$(git rev-parse HEAD)" != "$(git rev-parse @{u})" ]; then
+            echo "Pushing changes to origin/main..."
+            git push origin main
+          else
+            echo "No new commits to push."
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
