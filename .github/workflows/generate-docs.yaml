@@ -1,19 +1,27 @@
-name: Generate and Commit Manuals
+name: Generate and Commit Manuals (Hourly)
 
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    # Roda a cada hora, no minuto 0 (e.g., 00:00, 01:00, 02:00, etc. UTC)
+    # Veja a documentação para mais sobre cron: https://docs.github.com/pt/actions/using-workflows/workflow-syntax-for-github-actions#onschedule
+    - cron: '0 * * * *'
+  workflow_dispatch: # Mantém o trigger manual para testes ou execução sob demanda
 
 jobs:
   generate-manuals:
     runs-on: ubuntu-latest
+    # Adiciona concorrência para evitar que várias execuções agendadas do mesmo workflow
+    # rodem ao mesmo tempo se uma demorar mais que o esperado.
+    concurrency: generate-manuals-workflow
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        # Recomenda-se usar a versão mais recente para melhor segurança e desempenho
+        uses: actions/checkout@v4
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v2
+        # Recomenda-se usar a versão mais recente para melhor segurança e desempenho
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
@@ -34,6 +42,7 @@ jobs:
           GOOGLEAPIKEY: ${{ secrets.GOOGLEAPIKEY }}
           TEMA: "gerenciamento de patch de seguranças com red hat e solaris usando bash e shell - crie os manuais completos e longos detalhados em exemplos práticos, use icones e emojis"  # Defina o tema aqui ou como uma variável de ambiente no GitHub
         run: |
+          # Use o Python interpretador explicitamente para garantir que a versão configurada seja usada
           python doc-gen.py "$TEMA"
 
       - name: Verify generated artifacts
@@ -48,9 +57,17 @@ jobs:
       - name: Commit changes
         run: |
           git add .
-          git commit -m "Generated manuals for $TEMA"
+          # O 'git diff --quiet ||' garante que o 'git commit' só seja executado se houver mudanças.
+          # Isso é crucial para ações agendadas, pois evita que falhem se não houver novos manuais
+          # ou alterações a serem commitadas em uma determinada execução.
+          git diff --quiet || git commit -m "Generated manuals for $TEMA"
 
       - name: Push changes back to repository
+        # Garante que o push só ocorra se o commit anterior foi bem-sucedido (ou seja, houve mudanças).
+        # Se o `git commit` anterior não fez nada (pois não havia mudanças), este push seria ineficaz
+        # mas não necessariamente falharia, mas é bom ter a condição.
+        # No entanto, o `git diff --quiet || git commit` já lida com a maioria dos casos.
+        # A linha `git push` por si só já é segura o suficiente aqui, pois se não houve commit, não há o que empurrar.
         run: |
           git push origin main
         env:
