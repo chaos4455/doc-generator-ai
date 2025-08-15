@@ -2,32 +2,21 @@ name: Generate and Commit Manuals (Hourly)
 
 on:
   schedule:
-    # Roda a cada hora, no minuto 0 (e.g., 00:00, 01:00, 02:00, etc. UTC)
-    # Veja a documentação para mais sobre cron: https://docs.github.com/pt/actions/using-workflows/workflow-syntax-for-github-actions#onschedule
     - cron: '0 * * * *'
-  workflow_dispatch: # Mantém o trigger manual para testes ou execução sob demanda
+  workflow_dispatch:
 
 jobs:
   generate-manuals:
     runs-on: ubuntu-latest
-    # Adiciona concorrência para evitar que várias execuções agendadas do mesmo workflow
-    # rodem ao mesmo tempo se uma demorar mais que o esperado.
     concurrency: generate-manuals-workflow
 
     steps:
       - name: Checkout repository
-        # Recomenda-se usar a versão mais recente para melhor segurança e desempenho
         uses: actions/checkout@v4
-        # Adicione 'with: fetch-depth: 0' para garantir que todo o histórico seja buscado.
-        # Isso é importante para que 'git reset --hard' funcione corretamente contra o histórico completo.
         with:
           fetch-depth: 0
 
       - name: Ensure local repository is up-to-date with main
-        # Este passo garante que a cópia local do repositório está na versão mais recente
-        # da branch 'main' *no momento em que este passo é executado*.
-        # Isso resolve a questão de "sempre fazer commit do repo atualizado antes mesmo de gerar".
-        # Ele busca as últimas mudanças da origem e reseta o HEAD local para elas.
         run: |
           echo "Updating local repository to the latest 'main' branch..."
           git fetch origin main
@@ -35,14 +24,14 @@ jobs:
           echo "Local repository is now up-to-date."
 
       - name: Set up Python 3.11
-        # Recomenda-se usar a versão mais recente para melhor segurança e desempenho
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: Install requests library
+      - name: Install Python dependencies
         run: |
           python -m pip install requests
+          python -m pip install google-generativeai
 
       - name: Verify doc-gen.py and make executable
         run: |
@@ -50,16 +39,25 @@ jobs:
             echo "Error: doc-gen.py not found."
             exit 1
           fi
-          # Embora 'python doc-gen.py' não precise de permissão de execução,
-          # mantê-la é inofensivo e pode ser útil se você planeja executar o script diretamente.
           chmod +x doc-gen.py
+
+      # --- NOVO PASSO DE VERIFICAÇÃO ---
+      - name: Display doc-gen.py model configuration
+        run: |
+          echo "Conteúdo de doc-gen.py:"
+          # Exibe o arquivo inteiro (pode ser grande)
+          # cat doc-gen.py
+          # OU, exibe apenas a linha relevante para o modelo:
+          grep "genai.GenerativeModel" doc-gen.py || echo "Linha 'genai.GenerativeModel' não encontrada em doc-gen.py"
+          # OU, exibe a parte do código que faz a requisição se você ainda estiver usando requests (improvável agora)
+          # grep -C 5 "generativelanguage.googleapis.com" doc-gen.py || echo "URL da API não encontrada via requests"
+      # --- FIM DO NOVO PASSO ---
 
       - name: Run doc-gen.py to generate manuals
         env:
           GOOGLEAPIKEY: ${{ secrets.GOOGLEAPIKEY }}
           TEMA: "gerenciamento de patch de seguranças com red hat e solaris usando bash e shell - crie os manuais completos e longos detalhados em exemplos práticos, use icones e emojis"
         run: |
-          # Use o Python interpretador explicitamente para garantir que a versão configurada seja usada
           echo "Running doc-gen.py with theme: $TEMA"
           python doc-gen.py "$TEMA"
           echo "Manuals generation complete."
@@ -77,9 +75,6 @@ jobs:
       - name: Commit changes
         run: |
           git add .
-          # O 'git diff --quiet ||' garante que o 'git commit' só seja executado se houver mudanças.
-          # Isso é crucial para ações agendadas, pois evita que falhem se não houver novos manuais
-          # ou alterações a serem commitadas em uma determinada execução.
           if git diff --quiet --cached; then
             echo "No changes to commit."
           else
@@ -88,10 +83,7 @@ jobs:
           fi
 
       - name: Push changes back to repository
-        # Este passo só será executado e terá efeito se houver um commit feito no passo anterior.
         run: |
-          # Verifica se há commits para empurrar.
-          # Isso é redundante com a lógica do commit, mas adiciona uma camada de segurança.
           if [ "$(git rev-parse HEAD)" != "$(git rev-parse @{u})" ]; then
             echo "Pushing changes to origin/main..."
             git push origin main
