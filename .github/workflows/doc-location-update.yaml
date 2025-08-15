@@ -1,22 +1,30 @@
-name: Move and Update Manuals
+name: Move and Update Manuals (Hourly)
 
 on:
-  workflow_dispatch:
+  schedule:
+    # Roda a cada hora, no minuto 0 (e.g., 00:00, 01:00, 02:00, etc. UTC)
+    # Veja a documentação para mais sobre cron: https://docs.github.com/pt/actions/using-workflows/workflow-syntax-for-github-actions#onschedule
+    - cron: '0 * * * *'
+  workflow_dispatch: # Mantém o trigger manual para testes ou execução sob demanda
 
 jobs:
   move-and-update-manuals:
     runs-on: ubuntu-latest
     steps:
-      - name: Clean up environment
+      # Importante: Este passo garante um estado limpo antes de cada execução.
+      # Ele remove o diretório 'manuals' se existir e reverte quaisquer mudanças não comitadas.
+      # Isso é crucial para ações agendadas que modificam o repositório.
+      - name: Clean up environment (before checkout)
         run: |
-          rm -rf manuals
-          git checkout -- .
+          rm -rf manuals # Remove o diretório 'manuals' para garantir um estado limpo
+          git checkout . # Reverte quaisquer mudanças não comitadas no diretório atual (se houver)
 
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4 # Recomenda-se usar a versão mais recente para melhor segurança e desempenho
 
       - name: List files for processing
         run: |
+          # Lista os arquivos que serão processados (apenas para debug/visualização)
           find . -type f -name "*.md" | grep -E '[^_]*_[^_]*_[^_]*_[^_]*\.md' | xargs -I {} echo "Moving {} to manuals/"
 
       - name: Create manuals directory if not exists
@@ -25,10 +33,23 @@ jobs:
 
       - name: Move files to manuals directory
         run: |
+          # Move os arquivos que correspondem ao padrão para o diretório 'manuals'
           find . -type f -name "*.md" | grep -E '[^_]*_[^_]*_[^_]*_[^_]*\.md' | xargs -I {} mv {} manuals/
 
       - name: Update file paths in repository
         run: |
+          # ATENÇÃO: O comando 'sed' original neste passo (abaixo) parece ter um comportamento
+          #          incomum para "atualizar caminhos de arquivo".
+          #          Ele transforma 'nome_do_arquivo.md' em 'nome_do_arquivo/manuals/nome_do_arquivo.md'.
+          #          Se a sua intenção é atualizar *links internos* (por exemplo, em outros arquivos Markdown)
+          #          que apontam para os manuais movidos (e.g., de './antigo_manual.md' para 'manuals/novo_manual.md'),
+          #          você provavelmente precisará de um comando 'sed' diferente e mais específico.
+          #
+          #          Por exemplo, para links como `[Texto](./caminho/para/manual_abc.md)`:
+          #          find . -type f -name "*.md" -exec sed -i 's|\(\[.*\]\)(\.\/\([^_]*_[^_]*_[^_]*_[^_]*\)\.md)|\1(manuals/\2.md)|g' {} +
+          #          (Este é apenas um exemplo e pode precisar de ajustes para o seu caso específico de links.)
+          #
+          #          Mantenho o comando original da sua action, mas com esta ressalva:
           find . -type f -name "*.md" -exec sed -i 's|\([^\[]*\)\.md|\1/manuals/&|g' {} +
 
       - name: Verify changes
@@ -42,8 +63,10 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git add .
-          git commit -m "Move manuals to 'manuals' directory"
+          # Verifica se há alguma mudança para commitar.
+          # O 'git diff --quiet ||' garante que o 'git commit' só seja executado se houver mudanças.
+          # Isso evita que a action falhe se não houver arquivos para mover ou links para atualizar.
+          git diff --quiet || git commit -am "Move manuals to 'manuals' directory and update references"
           git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
